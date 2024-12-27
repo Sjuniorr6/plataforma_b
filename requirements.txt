@@ -11,3 +11,4 @@ psycopg2
 reportlab==4.2.5
 sqlparse==0.5.3
 tzdata==2024.2
+gunicorn==23.0.0
