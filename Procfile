@@ -1,1 +1,1 @@
-web: gunicorn plataforma.wsgi
+web: gunicorn plataforma.plataforma.wsgi
