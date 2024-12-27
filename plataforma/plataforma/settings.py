@@ -1,12 +1,16 @@
 from pathlib import Path
+import environ
+import os
+
+env = environ.Env()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-SECRET_KEY = 'django-insecure-$-bg)-_ihg(pfamxlatb%6330^7u5kcsao-c28jc%a&gk5o$x^'
+SECRET_KEY = env("SECRET_KEY")
+DEBUG = env.bool("DEBUG", default=False)
 
-DEBUG = True
-
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost"])
 
 # Application definition
 INSTALLED_APPS = [
@@ -51,14 +55,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'plataforma.wsgi.application'
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Bayer',
-        'USER': 'postgres',
-        'PASSWORD': 'Euro@1998!',
-        'HOST': '10.0.0.118',
-        'PORT': '5432',
-    }
+    'default': env.db(),  # DATABASE_URL será lido do ambiente
 }
 
 AUTH_PASSWORD_VALIDATORS = [
