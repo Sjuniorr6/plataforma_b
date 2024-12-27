@@ -1,0 +1,117 @@
+/* base.css */
+
+/* Navbar Geral */
+.navbar-modern {
+  background-color: #eac558; /* Cor amarela antiga */
+  padding: 10px 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra leve */
+}
+
+/* Estilo do Logo */
+.logo-navbar {
+  height: 30px; /* Logo proporcional */
+  margin-right: 10px;
+}
+.brand-text {
+  color: #000; /* Texto preto para contraste */
+  font-weight: bold;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+}
+
+/* Botão Toggler */
+.navbar-toggler {
+  border: none;
+}
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23000' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba(0,0,0,0.5)' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+/* Links de Navegação */
+.nav-link {
+  color: #000; /* Preto para contraste */
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0 10px;
+  position: relative; /* Necessário para o underline animado */
+  transition: color 0.3s ease;
+}
+
+/* Adicionando animação suave ao underline */
+.nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #000;
+  transition: width 0.3s ease-in-out;
+}
+
+/* Hover e Active */
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%; /* Expande o underline */
+}
+.nav-link:hover,
+.nav-link.active {
+  color: #000; /* Preto sólido */
+}
+
+/* Links ativos */
+.nav-link.active {
+  font-weight: bold;
+}
+
+/* Ajuste para itens no centro */
+.navbar-nav {
+  align-items: center;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .nav-link {
+    font-size: 0.9rem;
+    margin: 10px 0;
+  }
+}
+
+/* Footer Geral */
+footer {
+  background-color: #eac558; /* Cor amarela suave */
+  color: #000; /* Texto preto para contraste */
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Sombra superior leve */
+}
+
+/* Ajustes Responsivos */
+@media (max-width: 768px) {
+  .footer-modern p {
+    font-size: 0.8rem;
+  }
+}
+
+.whatsapp-button {
+  position: fixed;
+  bottom: 20px; /* Distância da parte inferior da tela */
+  right: 20px; /* Distância da lateral direita */
+  z-index: 1000; /* Garante que fique acima de outros elementos */
+  width: 60px; /* Largura do botão */
+  height: 60px; /* Altura do botão */
+  background-color: #25d366; /* Cor de fundo do WhatsApp */
+  border-radius: 50%; /* Torna o botão circular */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Sombra para destacar */
+  transition: transform 0.3s ease-in-out;
+}
+
+.whatsapp-button img {
+  width: 35px;
+  height: 35px;
+}
+
+.whatsapp-button:hover {
+  transform: scale(1.1); /* Efeito de zoom ao passar o mouse */
+}

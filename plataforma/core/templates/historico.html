@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Histórico{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/historico.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid px-5 my-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="text-center mb-0">Histórico de Resultados</h2>
+        <a href="{% url 'exportar_excel' %}" class="btn btn-success">Baixar Excel</a>
+    </div>
+
+    <div class="d-flex mb-3">
+        <input type="date" id="start_date" class="form-control me-2" placeholder="Data Inicial">
+        <input type="date" id="end_date" class="form-control me-2" placeholder="Data Final">
+        <button id="btnFiltrar" class="btn btn-primary">Filtrar</button>
+    </div>
+
+    <div class="table-responsive">
+        <table id="resultadosTable" class="table table-striped table-hover align-middle w-100">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>QR Value</th>
+                    <th>Informação</th>
+                    <th>Data e Hora</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Placeholder para a imagem -->
+<div id="imageModalPlaceholder"></div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Adiciona filtro customizado ao DataTable
+$.fn.dataTable.ext.search.push(
+    function(settings, data, dataIndex) {
+        const min = $('#start_date').val() ? new Date($('#start_date').val()) : null;
+        const max = $('#end_date').val() ? new Date($('#end_date').val()) : null;
+        const dataHora = new Date(data[3]); // Índice 3: coluna "Data e Hora"
+
+        if ((min === null || dataHora >= min) && (max === null || dataHora <= max)) {
+            return true;
+        }
+        return false;
+    }
+);
+
+$('#btnFiltrar').on('click', function() {
+    $('#resultadosTable').DataTable().draw();
+});
+
+// Configuração do DataTable
+let imagensCache = {};
+$('#resultadosTable').DataTable({
+    "ajax": {
+        "url": "/api/resultados/",
+        "dataSrc": ""
+    },
+    "columns": [
+        { "data": "id" },
+        { "data": "qr_value" },
+        {
+            "data": "informacao",
+            "render": function (data, type, row) {
+                let colorClass = '';
+                if (data.toUpperCase().includes('POSITIVO')) colorClass = 'status-positive';
+                else if (data.toUpperCase().includes('NEGATIVO')) colorClass = 'status-negative';
+                else if (data.toUpperCase().includes('INCONCLUSIVO')) colorClass = 'status-inconclusive';
+                return `<span class="status-dot ${colorClass}"></span> ${data}`;
+            }
+        },
+        {
+            "data": "data_hora",
+            "render": function (data, type, row) {
+                if (!data) return "";
+
+                const dateObj = new Date(data);
+                const dia = String(dateObj.getDate()).padStart(2, '0');
+                const mes = String(dateObj.getMonth() + 1).padStart(2, '0');
+                const ano = dateObj.getFullYear();
+                const hora = String(dateObj.getHours()).padStart(2, '0');
+                const minuto = String(dateObj.getMinutes()).padStart(2, '0');
+                const segundo = String(dateObj.getSeconds()).padStart(2, '0');
+
+                return `${dia}/${mes}/${ano} ${hora}:${minuto}:${segundo}`;
+            }
+        },
+        {
+            "data": null,
+            "render": function(data, type, row) {
+                return `
+                <div class="d-flex align-items-center gap-1">
+                  <button
+                    class="btn btn-primary btn-sm d-flex align-items-center justify-content-center"
+                    style="width: 40px; height: 40px;"
+                    onclick="openImageModal(${row.id})"
+                  >
+                    <i class="fas fa-image"></i>
+                  </button>
+                  <a
+                    href="/resultados/${row.id}/download/"
+                    class="btn btn-danger btn-sm d-flex align-items-center justify-content-center"
+                    style="width: 40px; height: 40px;"
+                  >
+                    <i class="fas fa-file-pdf"></i>
+                  </a>
+                </div>
+                `;
+            }
+        }
+    ]
+});
+
+function openImageModal(resultadoId) {
+    if (imagensCache[resultadoId]) {
+        mostrarModalImagem(resultadoId, imagensCache[resultadoId]);
+    } else {
+        $.ajax({
+            url: `/api/resultados/${resultadoId}/imagem/`,
+            type: 'GET',
+            success: function(response) {
+                const imagemBase64 = response.imagemBase64;
+                imagensCache[resultadoId] = imagemBase64;
+                mostrarModalImagem(resultadoId, imagemBase64);
+            },
+            error: function(xhr, status, error) {
+                console.error("Erro ao buscar a imagem:", error);
+            }
+        });
+    }
+}
+
+function mostrarModalImagem(resultadoId, imagemBase64) {
+    const modalHtml = `
+        <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="imageModalLabel">
+                  Imagem do Resultado ${resultadoId}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body text-center">
+                <img src="data:image/png;base64,${imagemBase64}"
+                     alt="Imagem do Resultado ${resultadoId}" class="img-fluid">
+              </div>
+            </div>
+          </div>
+        </div>
+    `;
+
+    document.getElementById('imageModalPlaceholder').innerHTML = modalHtml;
+    const modal = new bootstrap.Modal(document.getElementById('imageModal'));
+    modal.show();
+}
+</script>
+{% endblock %}

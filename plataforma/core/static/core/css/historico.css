@@ -1,0 +1,74 @@
+/* Estender a tabela para os lados */
+.container-fluid {
+  max-width: 100%;
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+/* Ajuste específico para DataTables */
+.dataTables_wrapper .dataTables_scrollBody {
+  overflow-x: auto;
+}
+
+.table {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  width: 100%; /* Garante que ocupe toda a largura disponível */
+}
+
+.table-hover tbody tr:hover {
+  background-color: #fdf2d0; /* Realce suave na linha */
+}
+
+/* Bolinhas de status */
+.status-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.status-positive {
+  background-color: #28a745; /* Verde */
+}
+
+.status-negative {
+  background-color: #dc3545; /* Vermelho */
+}
+
+.status-inconclusive {
+  background-color: #ffc107; /* Amarelo */
+}
+
+/* Botões */
+.btn-primary {
+  background-color: #eac558;
+  border: none;
+  color: #000;
+  font-weight: bold;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #d3a742;
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .container-fluid {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .table {
+    font-size: 0.85rem; /* Reduz o tamanho da fonte */
+  }
+
+  .btn-primary {
+    font-size: 0.8rem; /* Ajusta o tamanho do botão */
+    padding: 5px 10px;
+  }
+}

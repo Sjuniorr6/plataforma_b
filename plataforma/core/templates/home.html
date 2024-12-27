@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Seção de introdução (Hero) -->
+<section class="py-5">
+  <div class="container">
+    <div class="row mb-4">
+      <div class="col-md-12 text-center">
+        <h1 class="display-4 fw-bold">Bem-vindo à GS Auditor</h1>
+        <p class="lead">
+          Simplifique o controle e monitoramento de auditorias agrícolas com nossa plataforma inovadora e confiável.
+        </p>
+      </div>
+    </div>
+
+    <!-- Cards de funcionalidades (3 colunas) -->
+    <div class="row g-4">
+      <!-- Card 1: Dashboard -->
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100 text-center p-4">
+          <div class="mb-3">
+            <!-- Ícone do Bootstrap -->
+            <i class="bi bi-speedometer2 fs-1 text-primary"></i>
+          </div>
+          <h3 class="h5">Dashboard</h3>
+          <p class="text-muted">
+            Obtenha uma visão geral em tempo real das auditorias.
+          </p>
+          <a href="{% url 'dashboard' %}" class="btn btn-primary mt-3">Acessar Dashboard</a>
+        </div>
+      </div>
+
+      <!-- Card 2: Histórico -->
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100 text-center p-4">
+          <div class="mb-3">
+            <!-- Ícone do Bootstrap -->
+            <i class="bi bi-clock-history fs-1 text-warning"></i>
+          </div>
+          <h3 class="h5">Histórico</h3>
+          <p class="text-muted">
+            Tenha o controle total das auditorias passadas através do histórico salvo.
+          </p>
+          <a href="{% url 'historico' %}" class="btn btn-warning mt-3">Ver Histórico</a>
+        </div>
+      </div>
+
+      <!-- Card 3: Suporte -->
+      <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100 text-center p-4">
+          <div class="mb-3">
+            <!-- Ícone do Bootstrap -->
+            <i class="bi bi-headset fs-1 text-success"></i>
+          </div>
+          <h3 class="h5">Suporte</h3>
+          <p class="text-muted">
+            Entre em contato com nossa equipe de suporte especializada.
+          </p>
+          <a href="https://wa.me/5511978031144" target="_blank" class="btn btn-success mt-3">Falar no WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

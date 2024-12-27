@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sobre - GS Auditor{% endblock %}
+
+{% block extra_css %}
+<!-- Estilos específicos para a página Sobre -->
+<link rel="stylesheet" href="{% static 'core/css/sobre.css' %}">
+<!-- Se quiser Animate.css para pequenas animações de entrada -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" />
+{% endblock %}
+
+{% block content %}
+
+<!-- Seção Sobre Nós -->
+<section class="py-5">
+  <div class="container">
+    <!-- Cabeçalho do sobre -->
+    <div class="text-center mb-5">
+      <h1 class="display-5 fw-bold">Sobre a Golden Sat</h1>
+      <p class="lead">
+        O Grupo Golden Sat fornece soluções completas, combinando o que há de
+        mais moderno em tecnologia com a experiência de profissionais
+        especializados.
+      </p>
+    </div>
+
+    <!-- Destaques (Missão, Visão, Valores) -->
+    <!-- Podemos envolver em uma row para organizar os destaques -->
+    <div class="row g-4 mb-5">
+      <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm p-4 text-center">
+          <div class="mb-3">
+            <i class="bi bi-bullseye fs-2"></i>
+          </div>
+          <h3 class="h5">Missão</h3>
+          <p class="text-muted">
+            Desenvolver, produzir e comercializar tecnologias e serviços que
+            proporcionem proteção e segurança de bens.
+          </p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm p-4 text-center">
+          <div class="mb-3">
+            <i class="bi bi-eye fs-2"></i>
+          </div>
+          <h3 class="h5">Visão</h3>
+          <p class="text-muted">
+            Ser referência na prestação de serviços e soluções tecnológicas
+            avançadas que visam o combate, diminuição e erradicação de perdas
+            dos nossos parceiros, preservando vidas, gestão logística e todos
+            os bens envolvidos no processo.
+          </p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm p-4 text-center">
+          <div class="mb-3">
+            <i class="bi bi-people fs-2"></i>
+          </div>
+          <h3 class="h5">Valores</h3>
+          <p class="text-muted">
+            Respeito e valorização dos nossos profissionais com foco na qualidade
+            dos serviços e produtos, atuando com honestidade, segurança, sigilo,
+            ética e transparência.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pequena seção “Nossa Missão” específica -->
+    <div class="card border-0 shadow-sm p-4 mb-5">
+      <h2 class="h4 mb-3">Nossa Missão</h2>
+      <p>
+        Transformar o mercado por meio da inovação, conectividade e sustentabilidade,
+        melhorando a produtividade de forma responsável e eficaz.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Seção de Contato -->
+<section id="contato" class="py-5 bg-light scroll-reveal" style="margin-bottom: 0;">
+  <div class="container">
+    <!-- Título e subtítulo -->
+    <div class="text-center mb-4">
+      <h2 class="fw-bold" style="color: #ffb340;">
+        <i class="bi bi-geo-alt-fill"></i>
+        Onde Estamos
+      </h2>
+      <p class="mb-0">
+        Venha nos visitar ou entre em contato conosco!
+      </p>
+    </div>
+
+    <div class="row justify-content-center align-items-center">
+      <!-- Mapa -->
+      <div class="col-md-6 mb-4 mb-md-0">
+        <div class="card shadow-sm border-0">
+          <div class="card-body p-0" style="border-radius: 12px; overflow: hidden;">
+            <div class="ratio ratio-16x9">
+              <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3655.103218255745!2d-46.51534312501813!3d-23.636474264355346!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce681ede28ce49%3A0x2d1fda4f5fee82de!2sRua%20Haiti%2C%20129%20-%20Parque%20das%20Na%C3%A7%C3%B5es%2C%20Santo%20Andr%C3%A9%20-%20SP%2C%2009280-390!5e0!3m2!1spt-BR!2sbr!4v1735314342698!5m2!1spt-BR!2sbr" style="border: 0;" allowfullscreen
+                loading="lazy"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Endereço e botões -->
+      <div class="col-md-6">
+        <div class="mb-3">
+          <h5 class="fw-bold mb-0">
+            Rua Haiti, 129 - Parque das Nações <br />
+            Santo André - SP, 09280-390
+          </h5>
+          <p class="text-muted mb-4">
+            Nosso escritório está sempre de portas abertas para recebê-lo.
+          </p>
+        </div>
+
+        <!-- Botões de contato/redirecionamento -->
+        <div class="d-flex flex-wrap">
+          <a href="https://grupogoldensat.com.br/" target="_blank" class="btn btn-outline-secondary mb-2 me-2">
+            <i class="bi bi-globe2"></i> Site
+          </a>
+          <a href="https://www.instagram.com/grupogoldensat/" target="_blank"
+            class="btn btn-outline-secondary mb-2 me-2">
+            <i class="bi bi-camera"></i> Instagram
+          </a>
+          <a href="https://www.facebook.com/grupogoldensat/?locale=pt_BR" target="_blank"
+            class="btn btn-outline-secondary mb-2 me-2">
+            <i class="bi bi-building"></i> Facebook
+          </a>
+          <a href="https://api.whatsapp.com/send?phone=551144721567&text=Ol%C3%A1,%20entrei%20em%20contato%20pelo%20site"
+            target="_blank" class="btn btn-outline-secondary mb-2">
+            <i class="bi bi-chat-dots"></i> WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Mesmo IntersectionObserver para "scroll reveal"
+  document.addEventListener("DOMContentLoaded", () => {
+    const targets = document.querySelectorAll(".scroll-reveal");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("revealed");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+    targets.forEach((target) => {
+      observer.observe(target);
+    });
+  });
+</script>
+{% endblock %}
