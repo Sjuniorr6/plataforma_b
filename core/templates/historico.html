@@ -5,11 +5,16 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'core/css/historico.css' %}">
+<!-- Inclua Font Awesome para os ícones, se ainda não estiver incluído no base.html -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrQkTyqZ2hQkHRzpXqFnmMvQz1jLCQf1L5svvN9e7T1lgFz2PLVjAK30qL5hPZxMmcwK6sTjQVxkKx4a6Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 {% endblock %}
 
 {% block content %}
-
 <div class="container-fluid px-5 my-5">
+
+    <!-- ALERTAS DE DUPLICIDADE VÃO APARECER AQUI -->
+    <div id="qr-alerts-container"></div>
+
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="text-center mb-0">Histórico de Resultados</h2>
         <a href="{% url 'exportar_excel' %}" class="btn btn-success">Baixar Excel</a>
@@ -29,6 +34,7 @@
                     <th>QR Value</th>
                     <th>Informação</th>
                     <th>Data e Hora</th>
+                    <th>Fazenda</th>
                     <th>Ação</th>
                 </tr>
             </thead>
@@ -39,132 +45,305 @@
 
 <!-- Modal Placeholder para a imagem -->
 <div id="imageModalPlaceholder"></div>
+
 {% endblock %}
 
 {% block scripts %}
-<script>
-// Adiciona filtro customizado ao DataTable
-$.fn.dataTable.ext.search.push(
-    function(settings, data, dataIndex) {
-        const min = $('#start_date').val() ? new Date($('#start_date').val()) : null;
-        const max = $('#end_date').val() ? new Date($('#end_date').val()) : null;
-        const dataHora = new Date(data[3]); // Índice 3: coluna "Data e Hora"
+<!-- Inclua Bootstrap JS se ainda não estiver incluído no base.html -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% block extra_js %}
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const table = document.getElementById("resultadosTable");
+      const qrAlertsContainer = document.getElementById("qr-alerts-container");
+      const startDateInput = document.getElementById("start_date");
+      const endDateInput = document.getElementById("end_date");
+      const btnFiltrar = document.getElementById("btnFiltrar");
+      const imageModalPlaceholder = document.getElementById("imageModalPlaceholder");
+      const imagensCache = {};
 
-        if ((min === null || dataHora >= min) && (max === null || dataHora <= max)) {
-            return true;
+      // Conjunto para armazenar eventos já registrados, persistindo no localStorage
+      const eventosRegistrados = new Set(JSON.parse(localStorage.getItem('eventosRegistrados')) || []);
+
+      // Função para registrar o evento no servidor
+      async function registrarEvento(mensagem, qrValue) {
+        // Gera uma chave única para o evento com base em qrValue e mensagem
+        const eventoKey = `${qrValue}-${mensagem}`;
+        if (eventosRegistrados.has(eventoKey)) {
+          console.log(`Evento para QR Value ${qrValue} já registrado anteriormente.`);
+          return; // Evita registrar novamente
         }
-        return false;
-    }
-);
 
-$('#btnFiltrar').on('click', function() {
-    $('#resultadosTable').DataTable().draw();
-});
+        try {
+          // Obtém o CSRF Token a partir dos cookies
+          const csrfToken = getCookie('csrftoken');
 
-// Configuração do DataTable
-let imagensCache = {};
-$('#resultadosTable').DataTable({
-    "ajax": {
-        "url": "/api/resultados/",
-        "dataSrc": ""
-    },
-    "columns": [
-        { "data": "id" },
-        { "data": "qr_value" },
-        {
-            "data": "informacao",
-            "render": function (data, type, row) {
-                let colorClass = '';
-                if (data.toUpperCase().includes('POSITIVO')) colorClass = 'status-positive';
-                else if (data.toUpperCase().includes('NEGATIVO')) colorClass = 'status-negative';
-                else if (data.toUpperCase().includes('INCONCLUSIVO')) colorClass = 'status-inconclusive';
-                return `<span class="status-dot ${colorClass}"></span> ${data}`;
-            }
-        },
-        {
-            "data": "data_hora",
-            "render": function (data, type, row) {
-                if (!data) return "";
-
-                const dateObj = new Date(data);
-                const dia = String(dateObj.getDate()).padStart(2, '0');
-                const mes = String(dateObj.getMonth() + 1).padStart(2, '0');
-                const ano = dateObj.getFullYear();
-                const hora = String(dateObj.getHours()).padStart(2, '0');
-                const minuto = String(dateObj.getMinutes()).padStart(2, '0');
-                const segundo = String(dateObj.getSeconds()).padStart(2, '0');
-
-                return `${dia}/${mes}/${ano} ${hora}:${minuto}:${segundo}`;
-            }
-        },
-        {
-            "data": null,
-            "render": function(data, type, row) {
-                return `
-                <div class="d-flex align-items-center gap-1">
-                  <button
-                    class="btn btn-primary btn-sm d-flex align-items-center justify-content-center"
-                    style="width: 40px; height: 40px;"
-                    onclick="openImageModal(${row.id})"
-                  >
-                    <i class="fas fa-image"></i>
-                  </button>
-                  <a
-                    href="/resultados/${row.id}/download/"
-                    class="btn btn-danger btn-sm d-flex align-items-center justify-content-center"
-                    style="width: 40px; height: 40px;"
-                  >
-                    <i class="fas fa-file-pdf"></i>
-                  </a>
-                </div>
-                `;
-            }
-        }
-    ]
-});
-
-function openImageModal(resultadoId) {
-    if (imagensCache[resultadoId]) {
-        mostrarModalImagem(resultadoId, imagensCache[resultadoId]);
-    } else {
-        $.ajax({
-            url: `/api/resultados/${resultadoId}/imagem/`,
-            type: 'GET',
-            success: function(response) {
-                const imagemBase64 = response.imagemBase64;
-                imagensCache[resultadoId] = imagemBase64;
-                mostrarModalImagem(resultadoId, imagemBase64);
+          const response = await fetch("/api/eventos/registrar/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": csrfToken, // Inclui CSRF Token
             },
-            error: function(xhr, status, error) {
-                console.error("Erro ao buscar a imagem:", error);
-            }
-        });
-    }
-}
+            body: JSON.stringify({
+              mensagem: mensagem,
+              qr_value: qrValue,
+              data_hora: new Date().toISOString(),
+            }),
+          });
 
-function mostrarModalImagem(resultadoId, imagemBase64) {
-    const modalHtml = `
-        <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered modal-xl">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="imageModalLabel">
-                  Imagem do Resultado ${resultadoId}
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          const data = await response.json();
+
+          if (response.status === 201 || response.status === 200) {
+            console.log(`Evento registrado: ${data.message}`);
+            eventosRegistrados.add(eventoKey); // Marca o evento como registrado
+            salvarEventosRegistrados();
+          } else {
+            throw new Error(data.message || "Erro desconhecido ao registrar evento.");
+          }
+        } catch (error) {
+          console.error("Erro ao registrar evento:", error);
+        }
+      }
+
+      // Função para salvar eventos registrados no localStorage
+      function salvarEventosRegistrados() {
+        localStorage.setItem('eventosRegistrados', JSON.stringify([...eventosRegistrados]));
+      }
+
+      // Função para obter o CSRF Token dos cookies
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Verifica se o cookie começa com o nome desejado
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+
+      // Adiciona o evento de filtro
+      btnFiltrar.addEventListener("click", function () {
+        aplicarFiltroTabela();
+      });
+
+      // Busca os dados da API
+      fetch("/api/resultados/")
+        .then((response) => response.json())
+        .then((data) => {
+          processarDadosTabela(data);
+        })
+        .catch((error) => {
+          console.error("Erro ao carregar os dados:", error);
+        });
+
+      // Processa os dados e exibe na tabela
+      function processarDadosTabela(data) {
+        const seenValues = {};
+        const duplicates = [];
+
+        // Limpa alertas antigos
+        qrAlertsContainer.innerHTML = "";
+
+        // Detecta duplicidades
+        data.forEach((row) => {
+          const qrVal = row.qr_value;
+          if (qrVal) { // Verifica se qr_value existe
+            if (qrVal in seenValues) {
+              duplicates.push({
+                firstId: seenValues[qrVal],
+                secondId: row.id,
+                qrValue: qrVal,
+              });
+            } else {
+              seenValues[qrVal] = row.id;
+            }
+          }
+        });
+
+        // Cria alertas de duplicidade e registra eventos
+        if (duplicates.length > 0) {
+          duplicates.forEach((dup) => {
+            if (!document.querySelector(`.alert[data-qr="${dup.qrValue}"]`)) {
+              const alert = document.createElement("div");
+              alert.className =
+                "alert alert-warning d-flex justify-content-between align-items-center";
+              alert.setAttribute("data-qr", dup.qrValue);
+
+              const mensagem = `O ID ${dup.firstId} e o ID ${dup.secondId} possuem o mesmo QR Value: ${dup.qrValue}`;
+              alert.innerHTML = `
+                <div>
+                  <strong>Atenção!</strong> ${mensagem}
+                </div>
+                <button type="button" class="btn-close" aria-label="Close"></button>
+              `;
+
+              alert.querySelector(".btn-close").addEventListener("click", function () {
+                alert.remove();
+              });
+
+              qrAlertsContainer.appendChild(alert);
+
+              // Registra o evento no servidor
+              registrarEvento(mensagem, dup.qrValue);
+            }
+          });
+        }
+
+        // Atualiza as linhas da tabela
+        const tbody = table.querySelector("tbody");
+        tbody.innerHTML = "";
+        data.forEach((row) => {
+          const tr = document.createElement("tr");
+
+          tr.innerHTML = `
+            <td>${row.id}</td>
+            <td>${row.qr_value || "Não especificado"}</td>
+            <td>${row.informacao || "N/A"}</td>
+            <td>${formatarDataHora(row.data_hora)}</td>
+            <td>${row.fazenda || "Não especificado"}</td>
+            <td>
+              <div class="d-flex align-items-center gap-1">
+                <button
+                  class="btn btn-primary btn-sm d-flex align-items-center justify-content-center"
+                  style="width: 40px; height: 40px;"
+                  onclick="openImageModal(${row.id})"
+                >
+                  <i class="fas fa-image"></i>
+                </button>
+                <a
+                  href="/resultados/${row.id}/download/"
+                  class="btn btn-danger btn-sm d-flex align-items-center justify-content-center"
+                  style="width: 40px; height: 40px;"
+                >
+                  <i class="fas fa-file-pdf"></i>
+                </a>
+                <a
+                  href="/resultados/${row.id}/editar/"
+                  class="btn btn-warning btn-sm d-flex align-items-center justify-content-center"
+                  style="width: 40px; height: 40px;"
+                >
+                  <i class="fas fa-edit"></i>
+                </a>
               </div>
-              <div class="modal-body text-center">
-                <img src="data:image/png;base64,${imagemBase64}"
-                     alt="Imagem do Resultado ${resultadoId}" class="img-fluid">
+            </td>
+          `;
+
+          tbody.appendChild(tr);
+        });
+      }
+
+      // Formata a data e hora
+      function formatarDataHora(data) {
+        if (!data) return "Não especificado";
+
+        const dateObj = new Date(data);
+        const dia = String(dateObj.getDate()).padStart(2, "0");
+        const mes = String(dateObj.getMonth() + 1).padStart(2, "0");
+        const ano = dateObj.getFullYear();
+        const hora = String(dateObj.getHours()).padStart(2, "0");
+        const minuto = String(dateObj.getMinutes()).padStart(2, "0");
+        const segundo = String(dateObj.getSeconds()).padStart(2, "0");
+
+        return `${dia}/${mes}/${ano} ${hora}:${minuto}:${segundo}`;
+      }
+
+      // Aplica o filtro de datas na tabela
+      function aplicarFiltroTabela() {
+        const rows = table.querySelectorAll("tbody tr");
+        const min = startDateInput.value ? new Date(startDateInput.value) : null;
+        const max = endDateInput.value ? new Date(endDateInput.value) : null;
+
+        rows.forEach((row) => {
+          const dataHoraStr = row.children[3].textContent.trim();
+          const [dataStr, horaStr] = dataHoraStr.split(' ');
+          const [dia, mes, ano] = dataStr.split('/');
+          const [hora, minuto, segundo] = horaStr.split(':');
+          const dataHora = new Date(`${ano}-${mes}-${dia}T${hora}:${minuto}:${segundo}`);
+
+          const exibir =
+            (!min || dataHora >= min) && (!max || dataHora <= max);
+          row.style.display = exibir ? "" : "none";
+        });
+      }
+
+      // Definir openImageModal no escopo global
+      window.openImageModal = async function(resultadoId) {
+        if (imagensCache[resultadoId]) {
+          mostrarModalImagem(resultadoId, imagensCache[resultadoId]);
+          return;
+        }
+
+        try {
+          console.log(`Buscando imagem para Resultado ID: ${resultadoId}`);
+          const response = await fetch(`/api/resultados/${resultadoId}/imagem/`);
+          if (!response.ok) {
+            throw new Error(`Erro ao buscar a imagem: ${response.statusText}`);
+          }
+
+          const data = await response.json();
+          if (!data.imagemBase64) {
+            throw new Error("Imagem não encontrada na resposta.");
+          }
+
+          const imagemBase64 = data.imagemBase64;
+          imagensCache[resultadoId] = imagemBase64;
+          console.log(`Imagem carregada e adicionada ao cache para Resultado ID: ${resultadoId}`);
+          mostrarModalImagem(resultadoId, imagemBase64);
+        } catch (error) {
+          console.error("Erro ao buscar a imagem:", error);
+          alert("Não foi possível carregar a imagem. Por favor, tente novamente.");
+        }
+      }
+
+      // Função para mostrar o modal com a imagem
+      function mostrarModalImagem(resultadoId, imagemBase64) {
+        console.log(`Mostrando modal para Resultado ID: ${resultadoId}`);
+        const modalId = `imageModal-${resultadoId}`;
+        const existingModal = document.getElementById(modalId);
+
+        if (existingModal) {
+          const modal = new bootstrap.Modal(existingModal);
+          modal.show();
+          return;
+        }
+
+        const modalHtml = `
+          <div class="modal fade" id="${modalId}" tabindex="-1" aria-labelledby="${modalId}Label" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-xl">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="${modalId}Label">Imagem do Resultado ${resultadoId}</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                  <img src="data:image/png;base64,${imagemBase64}" alt="Imagem do Resultado ${resultadoId}" class="img-fluid">
+                </div>
               </div>
             </div>
           </div>
-        </div>
-    `;
+        `;
 
-    document.getElementById('imageModalPlaceholder').innerHTML = modalHtml;
-    const modal = new bootstrap.Modal(document.getElementById('imageModal'));
-    modal.show();
-}
-</script>
+        imageModalPlaceholder.insertAdjacentHTML('beforeend', modalHtml);
+        const modalElement = document.getElementById(modalId);
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+
+        // Remove o modal do DOM após ser fechado para evitar acúmulo de elementos
+        modalElement.addEventListener('hidden.bs.modal', () => {
+          modalElement.remove();
+        });
+      }
+
+      // Inicializa o registro de eventos a partir do localStorage
+      salvarEventosRegistrados();
+    });
+  </script>
+{% endblock %}
+
 {% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Eventos Registrados</h1>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>QR Value</th>
+        <th>Mensagem</th>
+        <th>IDs Envolvidos</th>
+        <th>Data e Hora</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for evento in eventos %}
+        <tr>
+          <td>{{ evento.id }}</td>
+          <td>{{ evento.qr_value }}</td>
+          <td>{{ evento.mensagem }}</td>
+          <td>{{ evento.ids|join:", " }}</td>
+          <td>{{ evento.data_hora|date:"d/m/Y H:i:s" }}</td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="5">Nenhum evento registrado.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

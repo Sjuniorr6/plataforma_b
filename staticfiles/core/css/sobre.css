@@ -1,0 +1,76 @@
+/* sobre.css */
+
+/* Espaçamento da primeira seção (Sobre Nós) */
+.about-us {
+    padding: 2rem 0;
+  }
+  .about-us-container {
+    max-width: 800px;
+    margin: 0 auto; 
+    text-align: center;
+  }
+  .about-us-container header {
+    margin-bottom: 3rem;
+  }
+  
+  /* Destaques (Missão, Visão, Valores) */
+  .about-us-highlights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+    margin-bottom: 3rem;
+  }
+  .highlight {
+    flex: 1 1 200px;
+    min-width: 200px;
+    max-width: 250px;
+    text-align: center;
+  }
+  .highlight i {
+    color: #555;
+  }
+  .highlight h2 {
+    font-size: 1.4rem;
+    margin-top: 0.5rem;
+  }
+  .highlight p {
+    font-size: 0.95rem;
+    color: #555;
+  }
+  
+  /* "Nossa Missão" */
+  .about-us-mission {
+    margin-bottom: 3rem;
+  }
+  
+  /* ========== Seção de Contato (nova) ========== */
+  .btn-contact {
+    background-color: #ffb340;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.3s;
+  }
+  .btn-contact:hover {
+    background-color: #e5a233;
+    color: #fff;
+  }
+  
+  /* "scroll-reveal" anim */
+  .scroll-reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.8s ease;
+  }
+  .scroll-reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  section#contato {
+    padding-bottom: 0 !important;
+  }

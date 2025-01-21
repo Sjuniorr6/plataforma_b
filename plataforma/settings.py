@@ -10,7 +10,9 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 SECRET_KEY = env("SECRET_KEY")
 DEBUG = env.bool("DEBUG", default=False)
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[".railway.app", "localhost"])
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+
+
 
 # Application definition
 INSTALLED_APPS = [
@@ -23,6 +25,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'core'
 ]
+LOGIN_REDIRECT_URL = '/'  # Redireciona após login bem-sucedido
+LOGOUT_REDIRECT_URL = '/login/'  # Redireciona após logout
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -57,10 +61,19 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'plataforma.wsgi.application'
-
 DATABASES = {
-    'default': env.db(),  # DATABASE_URL será lido do ambiente
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',  # Agora usando o banco recém-criado
+        'USER': 'postgres',
+        'PASSWORD': 'GGSjun2024',
+        'HOST': 'database-1.cb6awmsm2t69.us-east-1.rds.amazonaws.com',
+        'PORT': '5432',
+    }
 }
+
+
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
