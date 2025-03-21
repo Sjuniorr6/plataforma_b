@@ -69,6 +69,9 @@ DATABASES = {
         'PASSWORD': '44523913',
         'HOST': 'database-1.cb6awmsm2t69.us-east-1.rds.amazonaws.com',
         'PORT': '5432',
+        'OPTIONS': {
+            'sslmode': 'require',  # ou outro modo SSL
+        },
     }
 }
 
