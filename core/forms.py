@@ -12,4 +12,4 @@ from .models import Resultado
 class ResultadoForm(forms.ModelForm):
     class Meta:
         model = Resultado
-        fields = ['qr_value', 'max_padroes', 'informacao', 'fazenda', 'data_hora']  # Exclua 'imagem' daqui
+        fields = ['qr_value', 'max_padroes', 'informacao', 'fazenda', 'data_hora','id_entrada']  # Exclua 'imagem' daqui

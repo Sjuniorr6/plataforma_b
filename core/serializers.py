@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Resultado
+from .models import Resultado, Evento
 
 class ResultadoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -8,14 +8,15 @@ class ResultadoSerializer(serializers.ModelSerializer):
             'id',
             'qr_value',
             'max_padroes',
+            'id_entrada',  # <-- Adicionamos aqui
             'informacao',
             'data_hora',
             'fazenda',
         ]
-from rest_framework import serializers
-from .models import Evento
 
 class EventoSerializer(serializers.ModelSerializer):
+    # Se seu Evento tem relacionamento com Resultado,
+    # mantenha a referência ou ajuste conforme sua lógica.
     resultado = serializers.PrimaryKeyRelatedField(queryset=Resultado.objects.all())
 
     class Meta:

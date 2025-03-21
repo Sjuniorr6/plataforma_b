@@ -8,6 +8,7 @@ from django.db import models
 class Resultado(models.Model):
     qr_value = models.CharField(max_length=255)
     max_padroes = models.IntegerField()
+    id_entrada = models.CharField(max_length=100, null=True,blank=True)
     informacao = models.CharField(max_length=200)
     fazenda = models.CharField(max_length=200,null=True,blank=True)
     data_hora = models.DateTimeField()

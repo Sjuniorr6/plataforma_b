@@ -88,10 +88,7 @@
                 Histórico
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link {% if request.resolver_match.url_name == 'eventos' %}active{% endif %}" href="{% url 'eventos' %}">
-                Eventos
-              </a>
+           
             </li>
             <li class="nav-item">
               <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: inline;">

@@ -31,6 +31,7 @@
             <thead class="table-dark">
                 <tr>
                     <th>ID</th>
+                    <th>ID Entrada</th>
                     <th>QR Value</th>
                     <th>Informação</th>
                     <th>Data e Hora</th>
@@ -203,6 +204,7 @@
 
           tr.innerHTML = `
             <td>${row.id}</td>
+            <td>${row.id_entrada}</td>
             <td>${row.qr_value || "Não especificado"}</td>
             <td>${row.informacao || "N/A"}</td>
             <td>${formatarDataHora(row.data_hora)}</td>
@@ -260,8 +262,16 @@
         const max = endDateInput.value ? new Date(endDateInput.value) : null;
 
         rows.forEach((row) => {
-          const dataHoraStr = row.children[3].textContent.trim();
+          // Agora usamos o índice 4 para a coluna de Data e Hora
+          const dataHoraStr = row.children[4].textContent.trim();
           const [dataStr, horaStr] = dataHoraStr.split(' ');
+
+          // Se a linha não tiver data ou hora, ou for "Não especificado", ignoramos
+          if (!dataStr || !horaStr || dataHoraStr === "Não especificado") {
+            row.style.display = "";
+            return;
+          }
+
           const [dia, mes, ano] = dataStr.split('/');
           const [hora, minuto, segundo] = horaStr.split(':');
           const dataHora = new Date(`${ano}-${mes}-${dia}T${hora}:${minuto}:${segundo}`);

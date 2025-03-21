@@ -66,7 +66,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',  # Agora usando o banco recém-criado
         'USER': 'postgres',
-        'PASSWORD': 'GGSjun2024',
+        'PASSWORD': '44523913',
         'HOST': 'database-1.cb6awmsm2t69.us-east-1.rds.amazonaws.com',
         'PORT': '5432',
     }
