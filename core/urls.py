@@ -30,7 +30,7 @@ urlpatterns = [
     path('api/dashboard-data/', DashboardDataView.as_view(), name='dashboard-data'),
 
     # Páginas
-    path('', home_view, name='home'),             # /
+    path('home', home_view, name='home'),             # /
     path('historico/', historico_view, name='historico'),
     path('dashboard/', dashboard_view, name='dashboard'),
     path('sobre/', sobre_view, name='sobre'),
@@ -46,7 +46,7 @@ urlpatterns = [
     path('api/eventos/registrar/', RegistrarEventoAPIView.as_view(), name='registrar_evento'),
 
     # Autenticação
-    path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    path('', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 ]
 
