@@ -65,6 +65,12 @@ def gerar_pdf(resultado):
     c.drawString(150, text_y, resultado.qr_value)
 
     text_y -= 20
+   
+    c.drawString(50, text_y, "ID Entrada:")
+    c.setFont("Roboto", 12)
+    c.drawString(150, text_y, resultado.id_entrada)
+
+    text_y -= 20
     c.setFont("Roboto-Bold", 12)
     c.drawString(50, text_y, "Data e Hora:")
     c.setFont("Roboto", 12)
