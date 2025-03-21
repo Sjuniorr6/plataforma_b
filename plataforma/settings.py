@@ -29,8 +29,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'core'
 ]
-LOGIN_REDIRECT_URL = '/'  # Redireciona após login bem-sucedido
-LOGOUT_REDIRECT_URL = '/login/'  # Redireciona após logout
+LOGIN_REDIRECT_URL = 'home'  # Redireciona após login bem-sucedido
+LOGOUT_REDIRECT_URL = '/'  # Redireciona após logout
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
