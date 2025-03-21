@@ -1,2 +1,18 @@
 bayer.sqlite3
-venv
+
+# Ambiente virtual (se houver)
+venv/
+
+# Python caches
+__pycache__/
+*.pyc
+
+# Arquivos de log
+logs/
+*.log
+
+# Variáveis de ambiente / credenciais
+.env
+
+# Outros arquivos temporários
+temp_image.jpg
