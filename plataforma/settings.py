@@ -71,7 +71,7 @@ DATABASES = {
         'NAME': 'postgres',  # Agora usando o banco recém-criado
         'USER': 'postgres',
         'PASSWORD': '44523913',
-        'HOST': 'database-1.cb6awmsm2t69.us-east-1.rds.amazonaws.com',
+        'HOST': 'database-3.cfegu84mu8gn.us-east-1.rds.amazonaws.com',
         'PORT': '5432',
         'OPTIONS': {
             'sslmode': 'require',  # ou outro modo SSL
