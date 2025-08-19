@@ -10,13 +10,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 SECRET_KEY = env("SECRET_KEY")
 DEBUG = env.bool("DEBUG", default=False)
 
-ALLOWED_HOSTS = [
-    'gsauditor.com.br',
-    'www.gsauditor.com.br',
-    '13.223.116.167',
-    '127.0.0.1',
-    'localhost',
-]
+ALLOWED_HOSTS = [ 'gsauditor.com.br','www.gsauditor.com.br', '13.223.116.167','127.0.0.1', 'localhost',]
 CSRF_TRUSTED_ORIGINS = [
     'https://gsauditor.com.br',
     'https://www.gsauditor.com.br',
