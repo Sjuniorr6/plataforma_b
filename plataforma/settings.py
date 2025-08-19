@@ -11,12 +11,16 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = env.bool("DEBUG", default=False)
 
 ALLOWED_HOSTS = [
+    'gsauditor.com.br',
+    'www.gsauditor.com.br',
+    '13.223.116.167',
     '127.0.0.1',
     'localhost',
-    'gsauditor.com.br',
 ]
-
-
+CSRF_TRUSTED_ORIGINS = [
+    'https://gsauditor.com.br',
+    'https://www.gsauditor.com.br',
+]
 
 # Application definition
 INSTALLED_APPS = [
