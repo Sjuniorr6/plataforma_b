@@ -14,6 +14,7 @@ ALLOWED_HOSTS = [ 'gsauditor.com.br','www.gsauditor.com.br', '13.223.116.167','1
 CSRF_TRUSTED_ORIGINS = [
     'https://gsauditor.com.br',
     'https://www.gsauditor.com.br',
+
 ]
 
 # Application definition
